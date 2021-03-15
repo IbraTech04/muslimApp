@@ -236,7 +236,7 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
         nextPrayerMin = int(asrMinute);
       }
     }
-  } else if (hour() >= int(duhurHour) && hour() <= int(asrHour) + 12) {
+  } else if (hour() >= returnGreaterThan(int(duhurHour)) && hour() <= int(asrHour) + 12) {
     nextPrayer = "Asr";
     prevPrayer = "Duhur";
     fajrStat = false;
