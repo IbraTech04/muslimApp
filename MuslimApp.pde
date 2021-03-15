@@ -215,7 +215,7 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
         nextPrayerMin = int(duhurMinute);
       }
     }
-  } else if (hour() >= int(fajrHour) && hour() <= int(duhurHour)) {
+  } else if (hour() >= int(fajrHour) && hour() <= returnGreaterThan(int(duhurHour))) {
     nextPrayer = "Duhur";
     prevPrayer = "Fajr";
     fajrStat = false;
@@ -383,5 +383,14 @@ void timeCalc(int prayerHour, int prayerMin, boolean fajr) { //Time calculation 
     localHourLeft = localHourLeft + ((localHours) - hour());
     hourLeft = localHourLeft;
     minLeft = localMinLeft;
+  }
+}
+
+int returnGreaterThan(int input){
+  if (input < 12){
+    return input + 12; 
+  }
+  else{
+    return input; 
   }
 }
