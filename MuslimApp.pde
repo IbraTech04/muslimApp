@@ -9,39 +9,57 @@ PImage home, prayer, calendar; //Define image varibles
 String calDate = ""; //Varible which holds the date
 int day = day(), mon = month(), lineNum, hourLeft, minLeft, nextPrayerMin, nextPrayerHour, date = cal.get(Calendar.DAY_OF_WEEK), screenNumber = 1;
 boolean fajrStat;
-String[] week = {"", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}, months = {"", "January", "February", "March", "April", "May", "June", "July", "Auguest", "September", "October", "November", "December"}, times;
+String[] week = {"", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}, months = {"", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}, times;
 String fajrHour, fajrMinute, duhurHour, duhurMinute, asrHour, asrMinute, maghribHour, maghribMinute, ishaHour, ishaMinute, fajrHourNext, fajrMinuteNext, nextPrayer; //Varibles which hold prayer times
 String prevPrayer;
 float posX, posY;
 float scaleFactor = 1.5;
-void setup() { //Setup Function
+
+ArrayList<WeekRect> rects = new ArrayList<WeekRect>();
+Calendar viewWeek = Calendar.getInstance(); //Get calendar date
+Calendar event = Calendar.getInstance(); //Get calendar date
+
+
+void setup() {
+  //Setup Function
   background(0); //Setting Background
   textSize(100); //Set text size
   textAlign(CENTER);
-  text("TM Muslim V2.5", width/2, height/2); //Loading Text
+  text("TMMuslim " + ver, width/2, height/2); //Loading Text
   times = loadStrings("Annual Prayers.txt"); //Load the file with all the prayer times
   loadTimes(); //Load the prayer times 
-  surface.setTitle("TM Muslim");
+  surface.setTitle("TMMuslim");
   surface.setResizable(true);
   size(1280, 720);
   noStroke();
-  font = createFont("Product Sans Bold.ttf", 100); //Load the font
+  font = createFont("ProductSans-Bold.ttf", 100); //Load the font
   home = loadImage("mosque.png"); //Load the images
   calendar = loadImage("calL.png"); //Load the images
   prayer = loadImage("Clock.png");
   athan = new SoundFile(this, "Athan1.wav"); //Loading the Athan sound
   booster = new UiBooster();
-  delay(1000); //Delay which allows the user to read the loading text
+  initWeekView();
+  File saveDir = new File(System.getProperty("user.home") + "\\TMMuslim");
+  if (!saveDir.exists()) {
+    saveDir.mkdirs();
+  }
+  checkForUpdates();
 }
 void draw() {
   checkPrayer(); //Check which prayer is next
-  timeCalc(nextPrayerHour, nextPrayerMin, fajrStat); //Calculate time until next prayer
   playAthan();
   if (screenNumber == 0) {   //if statement which changes between the screens
   } else if (screenNumber == 1) {
-    mainScreen();
+    if (view == 0) {
+      mainScreen();
+    } else {
+      weekView();
+    }
   } else if (screenNumber == 2) {
     prayerList();
+  } else if (screenNumber == 3) {
+    background(0);
+    onTime(event);
   }
 }
 void mainScreen() {
@@ -56,7 +74,7 @@ void mainScreen() {
   fill(255);
   textFont(font, 50); //Setting Text Font
   textAlign(CENTER);
-  text("TM Muslim Home", width/2, height*0.0494444444 + 25); //Top Text
+  text("TMMuslim Home", width/2, height*0.0494444444 + 25); //Top Text
   imageMode(CENTER); //Setting the image mode to Center
   image(home, height*0.102986612/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2); //Icons for switching Screens
   image(prayer, width/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2);
@@ -86,7 +104,18 @@ void mainScreen() {
       nextPrayerMinS = nf(nextPrayerMin, 2);
     }
     text("At: " + nextPrayerHour + ":" + nextPrayerMinS, width/2, height/2+95); //Draw next prayer's time
-    text("(-" + hourLeft + ":" + minLeft + ")", width/2, height/2+140); //Draw how much time is left
+    text("(-" + return0Value(timeCalc(nextPrayerHour, nextPrayerMin, fajrStat)[0]) + ":" + return0Value(timeCalc(nextPrayerHour, nextPrayerMin, fajrStat)[1]) + ")", width/2, height/2+140); //Draw how much time is left
+    if (isSuhoorNext) {
+      if (hour() == 0) {
+        text("Time until Fajr: (-" + return0Value(timeCalc(int(fajrHour), int(fajrMinute), true)[0]) + ":" + return0Value(timeCalc(int(fajrHour), int(fajrMinute), true)[1]) + ")", width/2, height/2+180); //Draw how much time is left
+      } else if (hour() > 0 && hour < 5) {
+        text("Time until Fajr: (-" + return0Value(timeCalc(int(fajrHour), int(fajrMinute), true)[0]) + ":" + return0Value(timeCalc(int(fajrHour), int(fajrMinute), true)[1]) + ")", width/2, height/2+180); //Draw how much time is left
+      } else {
+        text("Time until Fajr: (-" + return0Value(timeCalc(int(fajrHourNext), int(fajrMinuteNext), true)[0]) + ":" + return0Value(timeCalc(int(fajrHourNext), int(fajrMinuteNext), true)[1]) + ")", width/2, height/2+180); //Draw how much time is left
+      }
+    } else {
+      text("Time until Maghrib: (-" + return0Value(timeCalc(int(maghribHour), int(maghribMinute), false)[0]) + ":" + return0Value(timeCalc(int(maghribHour), int(maghribMinute), fajrStat)[1]) + ")", width/2, height/2+180); //Draw how much time is left
+    }
   }
   popMatrix();
 }
@@ -98,7 +127,7 @@ void prayerList() {
   fill(255);
   textFont(font, 50);
   textAlign(CENTER);
-  text("TM Muslim Prayer List", width/2, height*0.0494444444 + 25); //Top text
+  text("TMMuslim Prayer List", width/2, height*0.0494444444 + 25); //Top text
   imageMode(CENTER);
   image(home, height*0.102986612/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2); //Icons for switching Screens
   image(prayer, width/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2);
@@ -188,13 +217,20 @@ void mousePressed() { //Function which detects whether the mouse has pressed an 
   if (mouseY >= height -  height*0.102986612 && mouseX <=height*0.102986612) {
     screenNumber = 1;
   } else if (mouseY >= height -  height*0.102986612 && mouseX >=width - height*0.102986612) {
-    screenNumber = 3;
+    if (screenNumber == 1) {
+      if (view == 0) {
+        view = 1;
+      } else {
+        view = 0;
+      }
+    }
   } else if (mouseY >= height -  height*0.102986612 && mouseX <= width/2 + height*0.102986612/2 && mouseX >= width/2 - height*0.102986612/2) {
     screenNumber = 2;
   }
 }
 void checkPrayer() { //Function which checks which prayer is next by using LOTS AND LOTS OF MATH (Not even gonna bother explaining how)
   if (hour() > int(ishaHour) + 12 || hour() <= int(fajrHour)) {
+    isSuhoorNext = true;
     nextPrayer = "Fajr";
     prevPrayer = "Isha";
     fajrStat = true;
@@ -202,12 +238,14 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
     nextPrayerMin = int(fajrMinute);
     if (hour() == int(fajrHour)) {
       if (minute() < int(fajrMinute)) {
+        isSuhoorNext = true;
         nextPrayer = "Fajr";
         prevPrayer = "Isha";
         fajrStat = true;
         nextPrayerHour = int(fajrHour);
         nextPrayerMin = int(fajrMinute);
       } else {
+        isSuhoorNext = false;
         fajrStat = false;
         nextPrayer = "Duhur";
         prevPrayer = "Fajr";
@@ -216,12 +254,13 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
       }
     }
   } else if (hour() >= int(fajrHour) && hour() <= returnGreaterThan(int(duhurHour))) {
+    isSuhoorNext = false;
     nextPrayer = "Duhur";
     prevPrayer = "Fajr";
     fajrStat = false;
     nextPrayerHour = int(duhurHour);
     nextPrayerMin = int(duhurMinute);
-    if (hour() == int(duhurHour)) {
+    if (hour() == returnGreaterThan(int(duhurHour))) {
       if (minute() < int(duhurMinute)) {
         nextPrayer = "Duhur";
         prevPrayer = "Fajr";
@@ -237,12 +276,13 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
       }
     }
   } else if (hour() >= returnGreaterThan(int(duhurHour)) && hour() <= int(asrHour) + 12) {
+    isSuhoorNext = false;
     nextPrayer = "Asr";
     prevPrayer = "Duhur";
     fajrStat = false;
     nextPrayerHour = int(asrHour);
     nextPrayerMin = int(asrMinute);
-    if (hour() == int(asrHour)) {
+    if (hour() == int(asrHour) + 12) {
       if (minute() < int(asrMinute)) {
         nextPrayer = "Asr";
         prevPrayer = "Duhur";
@@ -258,6 +298,7 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
       }
     }
   } else if (hour() >= int(asrHour) + 12 && hour() <= int(maghribHour) + 12) {
+    isSuhoorNext = false;
     nextPrayer = "Maghrib";
     prevPrayer = "Asr";
     fajrStat = false;
@@ -271,6 +312,7 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
         prevPrayer = "Asr";
         fajrStat = false;
       } else {
+        isSuhoorNext = true;
         fajrStat = false;
         nextPrayer = "Isha";
         prevPrayer = "Maghrib";
@@ -279,6 +321,7 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
       }
     }
   } else if (hour() >= int(maghribHour) + 12 && hour() <= int(ishaHour) + 12) {
+    isSuhoorNext = true;
     fajrStat = false;
     nextPrayerHour = int(ishaHour);
     nextPrayerMin = int(ishaMinute);
@@ -286,12 +329,14 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
     prevPrayer = "Maghrib";
     if (hour() == int(ishaHour) + 12) {
       if (minute() < int(ishaMinute)) {
+        isSuhoorNext = true;
         fajrStat = false;
         nextPrayer = "Isha";
         prevPrayer = "Maghrib";
         nextPrayerHour = int(ishaHour);
         nextPrayerMin = int(ishaMinute);
       } else {
+        isSuhoorNext = true;
         fajrStat = true;
         nextPrayer = "Fajr";
         prevPrayer = "Isha";
@@ -308,25 +353,25 @@ void playAthan() { //Function which checks whether its time to play the athan, a
   }
   if (!athan.isPlaying()) { //If the Athan is not playing
     if (int(fajrHour) == hour && int(fajrMinute) == minute()) { //IF its fajr
-      booster.createNotification(prevPrayer + " Athan is Now", "TM Muslim"); //Create Notification
+      booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
       athan.play(); //Play athan
     } else  if (int(duhurHour) == hour && int(duhurMinute) == minute()) { //If its duhur
-      booster.createNotification(prevPrayer + " Athan is Now", "TM Muslim"); //Create Notification
+      booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
       athan.play(); //Play Athan
     } else  if (int(asrHour) == hour && int(asrMinute) == minute()) { //If its asr 
-      booster.createNotification(prevPrayer + " Athan is Now", "TM Muslim"); //Create Notification
+      booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
       athan.play(); //Play athan
     } else  if (int(maghribHour) == hour && int(maghribMinute) == minute()) { //If its maghtib
       athan.play(); //Play Athan
-      booster.createNotification(prevPrayer + " Athan is Now", "TM Muslim"); //Create Notification
+      booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
     } else  if (int(ishaHour) == hour && int(ishaMinute) == minute()) { //If its Isha
       athan.play(); //Play Athan
-      booster.createNotification(prevPrayer + " Athan is Now", "TM Muslim"); //Create Notification
+      booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
     }
   }
 }
 
-void timeCalc(int prayerHour, int prayerMin, boolean fajr) { //Time calculation function (If you think im gonna bother explaining all the math you're insane)
+int[] timeCalc(int prayerHour, int prayerMin, boolean fajr) { //Time calculation function (If you think im gonna bother explaining all the math you're insane)
   int minute = minute(), hour = hour(); 
   int localMinLeft = 0;
   int localHourLeft = 0;
@@ -370,8 +415,7 @@ void timeCalc(int prayerHour, int prayerMin, boolean fajr) { //Time calculation 
         localMinLeft = localMinLeft - 60;
       }
     }
-    hourLeft = localHourLeft;
-    minLeft = localMinLeft;
+    return new int[]{ localHourLeft, localMinLeft};
   } else {//Otherwise proceed normally
     localMinLeft = 60 - minute;
     localHours --;
@@ -381,16 +425,22 @@ void timeCalc(int prayerHour, int prayerMin, boolean fajr) { //Time calculation 
       localMinLeft = localMinLeft - 60;
     }
     localHourLeft = localHourLeft + ((localHours) - hour());
-    hourLeft = localHourLeft;
-    minLeft = localMinLeft;
+    return new int[]{ localHourLeft, localMinLeft};
   }
 }
 
-int returnGreaterThan(int input){
-  if (input < 12){
-    return input + 12; 
+int returnGreaterThan(int input) {
+  if (input < 12) {
+    return input + 12;
+  } else {
+    return input;
   }
-  else{
-    return input; 
+}
+String return0Value(int input) {
+  if (input < 10) {
+    String toReturn = nf(input, 2);
+    return toReturn;
+  } else {
+    return str(input);
   }
 }
