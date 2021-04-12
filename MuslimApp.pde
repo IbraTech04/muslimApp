@@ -46,20 +46,24 @@ void setup() {
   checkForUpdates();
 }
 void draw() {
-  checkPrayer(); //Check which prayer is next
-  playAthan();
-  if (screenNumber == 0) {   //if statement which changes between the screens
-  } else if (screenNumber == 1) {
-    if (view == 0) {
-      mainScreen();
-    } else {
-      weekView();
+  if (updateMode) {
+    update();
+  } else {
+    checkPrayer(); //Check which prayer is next
+    playAthan();
+    if (screenNumber == 0) {   //if statement which changes between the screens
+    } else if (screenNumber == 1) {
+      if (view == 0) {
+        mainScreen();
+      } else {
+        weekView();
+      }
+    } else if (screenNumber == 2) {
+      prayerList();
+    } else if (screenNumber == 3) {
+      background(0);
+      onTime(event);
     }
-  } else if (screenNumber == 2) {
-    prayerList();
-  } else if (screenNumber == 3) {
-    background(0);
-    onTime(event);
   }
 }
 void mainScreen() {
