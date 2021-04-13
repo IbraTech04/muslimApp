@@ -116,6 +116,7 @@ void mainScreen() {
         text("Time until Fajr: (-" + return0Value(timeCalc(int(fajrHour), int(fajrMinute), true)[0]) + ":" + return0Value(timeCalc(int(fajrHour), int(fajrMinute), true)[1]) + ")", width/2, height/2+180); //Draw how much time is left
       } else {
         text("Time until Fajr: (-" + return0Value(timeCalc(int(fajrHourNext), int(fajrMinuteNext), true)[0]) + ":" + return0Value(timeCalc(int(fajrHourNext), int(fajrMinuteNext), true)[1]) + ")", width/2, height/2+180); //Draw how much time is left
+        println(int(fajrMinuteNext));
       }
     } else {
       text("Time until Maghrib: (-" + return0Value(timeCalc(int(maghribHour), int(maghribMinute), false)[0]) + ":" + return0Value(timeCalc(int(maghribHour), int(maghribMinute), fajrStat)[1]) + ")", width/2, height/2+180); //Draw how much time is left
@@ -413,7 +414,6 @@ int[] timeCalc(int prayerHour, int prayerMin, boolean fajr) { //Time calculation
       localHourLeft += 24 - hour;
 
       localHourLeft += int(prayerHour);
-
       if (localMinLeft >= 60) {
         localHourLeft ++;
         localMinLeft = localMinLeft - 60;
