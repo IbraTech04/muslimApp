@@ -92,6 +92,9 @@ void mainScreen() {
   if (hour > 12) {
     hour -= 12; //Convert to 12-hour if necissary
   }
+  if (hour == 0) {
+    hour = 12;
+  }
   String min = str(minute());
   if (minute() < 10) {
     min = nf(minute(), 2); //Add 0 before number if necissary
@@ -116,7 +119,6 @@ void mainScreen() {
         text("Time until Fajr: (-" + return0Value(timeCalc(int(fajrHour), int(fajrMinute), true)[0]) + ":" + return0Value(timeCalc(int(fajrHour), int(fajrMinute), true)[1]) + ")", width/2, height/2+180); //Draw how much time is left
       } else {
         text("Time until Fajr: (-" + return0Value(timeCalc(int(fajrHourNext), int(fajrMinuteNext), true)[0]) + ":" + return0Value(timeCalc(int(fajrHourNext), int(fajrMinuteNext), true)[1]) + ")", width/2, height/2+180); //Draw how much time is left
-        println(int(fajrMinuteNext));
       }
     } else {
       text("Time until Maghrib: (-" + return0Value(timeCalc(int(maghribHour), int(maghribMinute), false)[0]) + ":" + return0Value(timeCalc(int(maghribHour), int(maghribMinute), fajrStat)[1]) + ")", width/2, height/2+180); //Draw how much time is left
@@ -239,8 +241,17 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
     nextPrayer = "Fajr";
     prevPrayer = "Isha";
     fajrStat = true;
-    nextPrayerHour = int(fajrHour);
-    nextPrayerMin = int(fajrMinute);
+    if (hour() == 0) {
+      nextPrayerHour = int(fajrHour);
+      nextPrayerMin = int(fajrMinute);
+    } else if (hour() > 0 && hour() < 5) {
+      nextPrayerHour = int(fajrHour);
+      nextPrayerMin = int(fajrMinute);
+    } else {
+      nextPrayerHour = int(fajrHourNext);
+      nextPrayerMin = int(fajrMinuteNext);
+    }
+
     if (hour() == int(fajrHour)) {
       if (minute() < int(fajrMinute)) {
         isSuhoorNext = true;
@@ -345,8 +356,8 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
         fajrStat = true;
         nextPrayer = "Fajr";
         prevPrayer = "Isha";
-        nextPrayerHour = int(fajrHour);
-        nextPrayerMin = int(fajrMinute);
+        nextPrayerHour = int(fajrHourNext);
+        nextPrayerMin = int(fajrMinuteNext);
       }
     }
   }
