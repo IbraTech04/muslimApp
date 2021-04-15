@@ -17,7 +17,6 @@ class WeekRect {
   }
 
   public void drawRect() {
-    println(id);
     fill(43, 88, 12);
     rect(10, 10, width-20, 90, 10, 10, 10, 10);
     fill(255);

@@ -1,4 +1,4 @@
-import processing.sound.*; //Import Sound library
+import processing.sound.*; //Import Sound library //<>// //<>//
 import java.util.Calendar; //Import Calendar Functions
 import uibooster.*; //Import UIBooster
 UiBooster booster;//Define UIBooster Instance
@@ -68,7 +68,6 @@ void draw() {
 }
 void mainScreen() {
   //The main screen function that draws the home screen
-  pushMatrix();
   calDate = "";
   date();
   background(0);
@@ -83,7 +82,8 @@ void mainScreen() {
   image(home, height*0.102986612/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2); //Icons for switching Screens
   image(prayer, width/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2);
   image(calendar, width - height*0.102986612/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2);
-
+  pushMatrix();
+  translate(0, -20);
   textFont(font, 40);
   text(calDate, width/2, height/2-155); //Drawing hte date
   textFont(font, 150);
@@ -182,6 +182,8 @@ void prayerList() {
     fill(255);
   }
   text("Isha: " + ishaHour + ":" + ishaMinute, width/2, height/2+105);
+  fill(255);
+  text("Total Fast Time: " + return0Value(timeCalc(int(maghribHour), int(maghribMinute), int(fajrHour), int(fajrMinute), false)[0]) + ":" + return0Value(timeCalc(int(maghribHour), int(maghribMinute), int(fajrHour), int(fajrMinute), false)[1]), width/2, height/2+158);
 }
 //Calculate Date in format which user can understand
 void date() {
@@ -440,6 +442,64 @@ int[] timeCalc(int prayerHour, int prayerMin, boolean fajr) { //Time calculation
       localMinLeft = localMinLeft - 60;
     }
     localHourLeft = localHourLeft + ((localHours) - hour());
+    return new int[]{ localHourLeft, localMinLeft};
+  }
+}
+
+int[] timeCalc(int prayerHour, int prayerMin, int startHour, int startMin, boolean fajr) { //Time calculation function (If you think im gonna bother explaining all the math you're insane)
+  int minute = startMin, hour = startHour; 
+  int localMinLeft = 0;
+  int localHourLeft = 0;
+  int localHours = prayerHour;
+  if (localHours < 12) {
+    println("here");
+    localHours +=12;
+  }
+  if (fajr) { //If we're calculating Fajr do this (This is because calculating Fajr is a bit more involved than other prayers)
+    if (hour == 0) {
+      localMinLeft = 60 - minute;
+      localHours --;
+      localMinLeft += int(prayerMin);
+      if (localMinLeft >= 60) {
+        localHourLeft ++;
+        localMinLeft = localMinLeft - 60;
+      }
+      localHourLeft += int(prayerHour);
+    } else if (hour > 0 && hour < 5) {
+      localMinLeft = 60 - minute;
+      localHourLeft --;
+      localMinLeft += int(prayerMin);
+      if (localMinLeft >= 60) {
+        localHourLeft ++;
+        localMinLeft = localMinLeft - 60;
+      }
+      localHourLeft = localHourLeft + (int(prayerHour) - hour());
+    } else {
+      localMinLeft = 60 - minute;
+      localHourLeft --;
+      localMinLeft += int(prayerMin);
+      if (localMinLeft >= 60) {
+        localHourLeft ++;
+        localMinLeft = localMinLeft - 60;
+      }
+      localHourLeft += 24 - hour;
+
+      localHourLeft += int(prayerHour);
+      if (localMinLeft >= 60) {
+        localHourLeft ++;
+        localMinLeft = localMinLeft - 60;
+      }
+    }
+    return new int[]{ localHourLeft, localMinLeft};
+  } else {//Otherwise proceed normally
+    localMinLeft = 60 - minute;
+    localHours --;
+    localMinLeft += prayerMin;
+    if (localMinLeft >= 60) {
+      localHourLeft ++;
+      localMinLeft = localMinLeft - 60;
+    }
+    localHourLeft = localHourLeft + ((localHours) - hour);
     return new int[]{ localHourLeft, localMinLeft};
   }
 }
