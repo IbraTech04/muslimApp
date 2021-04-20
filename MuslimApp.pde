@@ -364,7 +364,7 @@ void checkPrayer() { //Function which checks which prayer is next by using LOTS 
     }
   }
 }
-void playAthan() { //Function which checks whether its time to play the athan, and does so
+void playAthan() {
   int hour = hour();
   if (hour > 12) { //Convert to 12 hour time (if necissary)
     hour -= 12;
@@ -373,16 +373,16 @@ void playAthan() { //Function which checks whether its time to play the athan, a
     if (int(fajrHour) == hour && int(fajrMinute) == minute()) { //IF its fajr
       booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
       athan.play(); //Play athan
-    } else  if (int(duhurHour) == hour && int(duhurMinute) == minute()) { //If its duhur
+    } else  if (returnGreaterThan(int(duhurHour)) == hour && int(duhurMinute) == minute()) { //If its duhur
       booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
       athan.play(); //Play Athan
-    } else  if (int(asrHour) == hour && int(asrMinute) == minute()) { //If its asr 
+    } else  if (returnGreaterThan(int(asrHour)) == hour && int(asrMinute) == minute()) { //If its asr 
       booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
       athan.play(); //Play athan
-    } else  if (int(maghribHour) == hour && int(maghribMinute) == minute()) { //If its maghtib
+    } else  if (returnGreaterThan(int(maghribHour)) == hour && int(maghribMinute) == minute()) { //If its maghtib
       athan.play(); //Play Athan
       booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
-    } else  if (int(ishaHour) == hour && int(ishaMinute) == minute()) { //If its Isha
+    } else  if (returnGreaterThan(int(ishaHour)) == hour && int(ishaMinute) == minute()) { //If its Isha
       athan.play(); //Play Athan
       booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
     }
