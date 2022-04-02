@@ -16,19 +16,21 @@ float posX, posY;
 float scaleFactor = 1.5;
 
 ArrayList<WeekRect> rects = new ArrayList<WeekRect>();
+
 Calendar viewWeek = Calendar.getInstance(); //Get calendar date
 Calendar event = Calendar.getInstance(); //Get calendar date
 
 
 void setup() {
+  surface.setIcon(loadImage("data/muslimIcon.png"));
   //Setup Function
   background(0); //Setting Background
   textSize(100); //Set text size
   textAlign(CENTER);
-  text("TMMuslim " + ver, width/2, height/2); //Loading Text
+  text("tMuslim " + ver, width/2, height/2); //Loading Text
   times = loadStrings("Annual Prayers.txt"); //Load the file with all the prayer times
   loadTimes(); //Load the prayer times 
-  surface.setTitle("TMMuslim");
+  surface.setTitle("tMuslim");
   surface.setResizable(true);
   size(1280, 720);
   noStroke();
@@ -39,11 +41,12 @@ void setup() {
   athan = new SoundFile(this, "Athan1.wav"); //Loading the Athan sound
   booster = new UiBooster();
   initWeekView();
-  File saveDir = new File(System.getProperty("user.home") + "\\TMMuslim");
+  File saveDir = new File(System.getProperty("user.home") + "\\tMuslim");
   if (!saveDir.exists()) {
     saveDir.mkdirs();
   }
-  checkForUpdates();
+  UpdaterThread up = new UpdaterThread();
+  up.start();
 }
 void draw() {
   if (updateMode) {
@@ -72,12 +75,12 @@ void mainScreen() {
   date();
   background(0);
   fill(43, 88, 12);
-  rect(0, height -  height*0.102986612, width, height); //These two are the two rectangles on the top and bottom
-  rect(0, 0, width, height*0.102986612);
+  rect(0, height -  height*0.102986612, width, height, 20, 20, 0, 0); //These two are the two rectangles on the top and bottom
+  rect(0, 0, width, height*0.102986612, 0, 0, 20, 20);
   fill(255);
   textFont(font, 50); //Setting Text Font
   textAlign(CENTER);
-  text("TMMuslim Home", width/2, height*0.0494444444 + 25); //Top Text
+  text("tMuslim Home", width/2, height*0.0494444444 + 25); //Top Text
   imageMode(CENTER); //Setting the image mode to Center
   image(home, height*0.102986612/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2); //Icons for switching Screens
   image(prayer, width/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2);
@@ -129,12 +132,12 @@ void mainScreen() {
 void prayerList() {
   background(0);
   fill(43, 88, 12);
-  rect(0, height -  height*0.102986612, width, height); //Rectangles at top and bottom
-  rect(0, 0, width, height*0.102986612);
+  rect(0, height -  height*0.102986612, width, height, 20, 20, 0, 0); //Rectangles at top and bottom
+  rect(0, 0, width, height*0.102986612, 0, 0, 20, 20);
   fill(255);
   textFont(font, 50);
   textAlign(CENTER);
-  text("TMMuslim Prayer List", width/2, height*0.0494444444 + 25); //Top text
+  text("tMuslim Prayer List", width/2, height*0.0494444444 + 25); //Top text
   imageMode(CENTER);
   image(home, height*0.102986612/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2); //Icons for switching Screens
   image(prayer, width/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2);
@@ -371,20 +374,20 @@ void playAthan() {
   }
   if (!athan.isPlaying()) { //If the Athan is not playing
     if (int(fajrHour) == hour && int(fajrMinute) == minute()) { //IF its fajr
-      booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
+      booster.createNotification(prevPrayer + " Athan is Now", "tMuslim"); //Create Notification
       athan.play(); //Play athan
     } else  if (returnGreaterThan(int(duhurHour)) == hour && int(duhurMinute) == minute()) { //If its duhur
-      booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
+      booster.createNotification(prevPrayer + " Athan is Now", "tMuslim"); //Create Notification
       athan.play(); //Play Athan
     } else  if (returnGreaterThan(int(asrHour)) == hour && int(asrMinute) == minute()) { //If its asr 
-      booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
+      booster.createNotification(prevPrayer + " Athan is Now", "tMuslim"); //Create Notification
       athan.play(); //Play athan
     } else  if (returnGreaterThan(int(maghribHour)) == hour && int(maghribMinute) == minute()) { //If its maghtib
       athan.play(); //Play Athan
-      booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
+      booster.createNotification(prevPrayer + " Athan is Now", "tMuslim"); //Create Notification
     } else  if (returnGreaterThan(int(ishaHour)) == hour && int(ishaMinute) == minute()) { //If its Isha
       athan.play(); //Play Athan
-      booster.createNotification(prevPrayer + " Athan is Now", "TMMuslim"); //Create Notification
+      booster.createNotification(prevPrayer + " Athan is Now", "tMuslim"); //Create Notification
     }
   }
 }

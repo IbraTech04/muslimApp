@@ -62,24 +62,24 @@ void update() {
     updateState++;
   } else if (updateState == 2) {
     background(0);
-    text("Updating... \nPlease do not close this window until this process is complete.\nTMMuslim will restart soon. Follow the prompts to update TMMuslim.", width/2, height/2+60);
+    text("Updating... \nPlease do not close this window until this process is complete.\ntMuslim will restart soon. Follow the prompts to update tMuslim.", width/2, height/2+60);
     text("Stage Two: Applying Update", width/2, height/2);
     updateState++;
   } else if (updateState == 3) {
     File file;
     Desktop desktop = Desktop.getDesktop();  
     try {
-      File theDir = new File(System.getProperty("user.home") + "\\TMMuslim");
+      File theDir = new File(System.getProperty("user.home") + "\\tMuslim");
       if (!theDir.exists()) {
         theDir.mkdirs();
       }
       if (System.getProperty("sun.desktop").equals("windows")) {
         if (System.getProperty("os.arch").equals("amd64")) {
           byte[] test = loadBytes("https://github.com/IbraTech04/updateServer/raw/master/muslim64.exe");
-          saveBytes(System.getProperty("user.home")+"\\TMMuslim\\TMMuslimV" + nversionFromServer[0] + ".exe", test);
+          saveBytes(System.getProperty("user.home")+"\\tMuslim\\tMuslimV" + nversionFromServer[0] + ".exe", test);
         } else {
           byte[] test = loadBytes("https://github.com/IbraTech04/updateServer/raw/master/muslim32.exe");
-          saveBytes(System.getProperty("user.home")+"\\TMMuslim\\TMMuslimV" + nversionFromServer[0] + ".exe", test);
+          saveBytes(System.getProperty("user.home")+"\\tMuslim\\tMuslimV" + nversionFromServer[0] + ".exe", test);
         }
       } else {
         link("https://github.com/IbraTech04/muslimApp/releases");
@@ -89,7 +89,7 @@ void update() {
         System.out.println("Desktop is not supported");
         return;
       }
-      file = new File(System.getProperty("user.home")+"\\TMMuslim\\TMMuslimV" + nversionFromServer[0] + ".exe");
+      file = new File(System.getProperty("user.home")+"\\tMuslim\\tMuslimV" + nversionFromServer[0] + ".exe");
       if (file.exists()) { 
         desktop.open(file);
         exit();

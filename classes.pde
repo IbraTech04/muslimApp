@@ -18,7 +18,7 @@ class WeekRect {
 
   public void drawRect() {
     fill(43, 88, 12);
-    rect(10, 10, width-20, 90, 10, 10, 10, 10);
+    rect(10, 10, width-20, 90, 20, 20, 20, 20);
     fill(255);
     textAlign(LEFT);
     textFont(font, 25); //Setting Text Font
@@ -31,6 +31,78 @@ class WeekRect {
         screenNumber = 3;
         event = cal;
       }
+    }
+  }
+}
+
+public class ClickableText {
+  String text;
+  int textPosX;
+  int textPosY;
+  int textSize;
+  boolean isCenter = false;
+  public boolean isPressed() {
+    if (isCenter) {
+      if (mouseX >= textPosX - ((text.length())*textSize/2)/2 && mouseX <= textPosX + ((text.length())*textSize/2)/2 && mouseY >= textPosY-textSize && mouseY <= textPosY) {
+        println("here");
+        return true;
+      }
+      return false;
+    } else {
+      if (mouseX >= textPosX && mouseX <= (text.length())*textSize/2 && mouseY >= textPosY-textSize && mouseY <= textPosY) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+  public void drawText() {
+    if (isCenter) {
+      textAlign(CENTER);
+    } else {
+      textAlign(LEFT);
+    }
+    text(text, textPosX, textPosY);
+  }
+  public void setText(String tempText) {
+    text = tempText;
+  }
+  public void setSize(int size) {
+    textSize = size;
+  }
+  public void setPos(int x, int y) {
+    textPosX = x;
+    textPosY = y;
+  }
+
+  public void setMode(String mode) {
+    if (mode.toUpperCase().equals("CENTER")) {
+      isCenter = true;
+    } else {
+      isCenter = false;
+    }
+  }
+  public int getTextSize() {
+    return textSize;
+  }
+  public int getTextX() {
+    return textPosX;
+  }
+  public int getTextY() {
+    return textPosY;
+  }
+  public String getText() {
+    return text;
+  }
+}
+
+class UpdaterThread extends Thread {
+  public void run()
+  {
+    try {
+      checkForUpdates();
+    }
+    catch (Exception e) {
     }
   }
 }

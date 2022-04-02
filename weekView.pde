@@ -46,16 +46,16 @@ void weekView() {
   noStroke();
   popMatrix();
   fill(43, 88, 12);
-  rect(0, height -  height*0.102986612, width, height); //These two are the two rectangles on the top and bottom
+  rect(0, height -  height*0.102986612, width, height, 20, 20, 0, 0); //These two are the two rectangles on the top and bottom
   imageMode(CENTER);
   //image(settingsp, height*0.102986612/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2);
   image(calendar, width - height*0.102986612/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2);
   //image(weekV, width/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2);
-  rect(0, 0, width, height*0.102986612);
+  rect(0, 0, width, height*0.102986612, 0, 0, 20, 20);
   fill(255);
   textFont(font, 50); //Setting Text Font
   textAlign(CENTER);
-  text("TMMuslim WeekView\u2122 Beta", width/2, height*0.0494444444 + 25); //Top Text
+  text("tMuslim WeekView\u2122 Beta", width/2, height*0.0494444444 + 25); //Top Text
   imageMode(CENTER); //Setting the image mode to Centeri
   image(home, height*0.102986612/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2); //Icons for switching Screens
   image(prayer, width/2, height - height*0.102986612/2, height*0.102986612/2, height*0.102986612/2);
@@ -93,7 +93,7 @@ String[] parseDateWeekView(String lineIn) {
   int dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
   String dayOfWeek = week[c.get(Calendar.DAY_OF_WEEK)];
   String month = months[c.get(Calendar.MONTH) + 1];
-  otherCalDate = month + " " + c.get(Calendar.DAY_OF_MONTH) + " 2021";
+  otherCalDate = month + " " + c.get(Calendar.DAY_OF_MONTH) + " 2022";
   String[] toReturn = {dayOfWeek, otherCalDate, loadTimesWeekView(dayOfMonth, month)};
   return toReturn;
 }
